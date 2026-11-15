@@ -47,12 +47,35 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .header{background:linear-gradient(135deg,#4f6ef7 0%,#7c3aed 50%,#ec4899 100%);padding:24px 16px 20px;text-align:center;position:relative;z-index:50}
 .header h1{font-size:24px;font-weight:800;color:#fff;letter-spacing:.5px;text-shadow:0 2px 8px rgba(0,0,0,.15)}
 .header p{color:rgba(255,255,255,.8);font-size:12px;margin-top:2px;font-weight:500}
-.app{max-width:720px;margin:0 auto;padding:0 12px 100px}
-/* Tabs */
-.tab-bar{display:flex;flex-wrap:wrap;gap:5px;padding:10px 0;position:sticky;top:0;z-index:40;background:var(--bg)}
-.tab-btn{flex:1 1 auto;min-width:0;padding:7px 6px;border:none;border-radius:20px;background:var(--surface);color:var(--text-2);font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;transition:var(--transition);box-shadow:var(--shadow);text-align:center}
-.tab-btn:hover{background:var(--surface-2);transform:translateY(-1px)}
-.tab-btn.active{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(79,110,247,.35)}
+.app{max-width:720px;margin:0 auto;padding:12px 12px 100px}
+.lic{width:1em;height:1em;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:-.125em}
+/* Bottom nav */
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 2px calc(10px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--text-3);flex:1;background:none;border:none;cursor:pointer;padding:2px 0;transition:color .15s}
+.nav-item .lic{font-size:22px}
+.nav-item.active{color:var(--accent)}
+.nav-item:active{transform:scale(.92)}
+/* FAB */
+.fab{position:fixed;right:18px;bottom:76px;z-index:61;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(79,110,247,.45);cursor:pointer;transition:transform .15s}
+.fab:active{transform:scale(.9)}
+.fab .lic{font-size:26px}
+/* Bottom sheet */
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);z-index:120;display:none;align-items:flex-end}
+.sheet-bg.open{display:flex}
+.sheet{background:var(--surface);width:100%;max-width:720px;margin:0 auto;border-radius:18px 18px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto;animation:sheetUp .25s cubic-bezier(.4,0,.2,1)}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-handle{width:40px;height:4px;border-radius:4px;background:var(--border);margin:4px auto 14px}
+.sheet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sheet-item{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 4px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-light);cursor:pointer;font-size:11px;font-weight:600;color:var(--text-2);transition:var(--transition)}
+.sheet-item .lic{font-size:24px;color:var(--accent)}
+.sheet-item:active{background:var(--surface-3)}
+.sheet-item.active{border-color:var(--accent);color:var(--accent)}
+/* Overflow menu */
+.menu-pop{position:fixed;top:54px;right:10px;z-index:110;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);padding:6px;min-width:190px;display:none}
+.menu-pop.open{display:block}
+.menu-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--text);background:none;border:none;width:100%;text-align:left}
+.menu-row .lic{font-size:18px;color:var(--text-2)}
+.menu-row:active{background:var(--surface-2)}
 /* Card */
 .card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:var(--shadow);transition:var(--transition)}
 .card:hover{box-shadow:var(--shadow-md)}
@@ -176,30 +199,88 @@ tr:hover td{background:var(--surface-2)}
 .cal-dots{display:flex;gap:2px;margin-top:4px;flex-wrap:wrap;justify-content:center}
 .cal-dots i{width:6px;height:6px;border-radius:50%}
 /* Print */
-@media print{.header,.tab-bar,.btn-row,.export-bar,.del-btn,.btn,.member-filter{display:none!important}.card{break-inside:avoid;box-shadow:none;border:1px solid #ddd}}
+@media print{.header,.bottom-nav,.fab,.btn-row,.export-bar,.del-btn,.btn,.member-filter{display:none!important}.card{break-inside:avoid;box-shadow:none;border:1px solid #ddd}}
 @media(max-width:500px){.app{padding:0 8px 100px}.card{padding:14px}.header h1{font-size:20px}}
 </style>
 </head>
 <body>
-<div class="header" style="padding-top:34px">
-  <h1>🏠 MY FAMILY</h1>
+<div class="header" style="padding-top:14px">
+  <h1 id="hdrTitle">MY FAMILY</h1>
   <p>Family Management Hub</p>
-  <span id="meChip" class="hdr-chip" style="left:10px" onclick="pickMe()">👤</span>
-  <span id="syncDot" class="hdr-chip" style="right:10px" onclick="syncNow(true)">☁️</span>
+  <span id="meChip" class="hdr-chip" style="left:10px" onclick="pickMe()"></span>
+  <span id="syncDot" class="hdr-chip" style="right:52px;display:inline-flex;align-items:center;gap:3px" onclick="syncNow(true)"></span>
+  <span id="ovBtn" class="hdr-chip" style="right:10px;display:inline-flex;align-items:center;font-size:18px" onclick="toggleMenu()"></span>
 </div>
-<div id="lockScreen" style="display:none"><div class="lock-box"><div style="font-size:42px">🏠</div><h2 style="margin:6px 0 2px">MY FAMILY</h2><p style="color:var(--text-3);font-size:13px;margin-bottom:14px">Enter the family PIN</p>
+<div id="lockScreen" style="display:none"><div class="lock-box"><div style="color:var(--accent);font-size:42px" id="lockLogo"></div><h2 style="margin:6px 0 2px">MY FAMILY</h2><p style="color:var(--text-3);font-size:13px;margin-bottom:14px">Enter the family PIN</p>
   <input id="lockPin" type="password" inputmode="numeric" style="text-align:center;font-size:22px;letter-spacing:8px" onkeydown="if(event.key==='Enter')tryUnlock()"><div id="lockErr" style="color:var(--red);font-size:12px;height:18px;margin-top:6px"></div>
   <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px" onclick="tryUnlock()">Unlock</button></div></div>
 <div class="app">
-  <div class="tab-bar" id="tabs"></div>
   <div id="content"></div>
 </div>
+<button class="fab" id="fab" onclick="fabAction()"></button>
+<nav class="bottom-nav" id="bottomNav"></nav>
+<div class="menu-pop" id="menuPop"></div>
+<div class="sheet-bg" id="sheetBg" onclick="if(event.target===this)closeSheet()"><div class="sheet" id="sheet"></div></div>
 <div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
   <div class="modal" id="modal"></div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycbw-dt804OImuntYlgn_tOAxPo5qSp8NkOH4bxC6RbCVjhQginJEIZODCPFXovlx5Sosyg/exec';
+// ===== ICONS (Lucide, inline SVG — offline-safe) =====
+const IC={
+ home:'<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>',
+ users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+ dots:'<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+ calendar:'<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/>',
+ wallet:'<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/>',
+ check:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+ checkbox:'<rect width="18" height="18" x="3" y="3" rx="2"/>',
+ menu:'<path d="M4 12h16M4 6h16M4 18h16"/>',
+ gift:'<rect width="20" height="5" x="2" y="7"/><path d="M12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>',
+ alarm:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3 2 6M22 6l-3-3"/>',
+ repeat:'<path d="M3 2v6h6M3 8a9 9 0 1 0 2.8-6.3"/>',
+ pill:'<path d="m10.5 20.5-7-7a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7zM8.5 8.5l7 7"/>',
+ card:'<rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/>',
+ star:'<path d="m12 2 3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ heart:'<path d="M3.5 13H7l2-5 3 9 2-5h4.5"/><path d="M20.8 11a5.4 5.4 0 0 0-9-5 5.4 5.4 0 0 0-9 5"/>',
+ cart:'<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.6 13h11.3l1.6-9H6"/>',
+ target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+ scroll:'<path d="M8 21h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H8M3 5a2 2 0 0 1 4 0v14M3 5h4M7 19h13"/>',
+ settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 0 1-4 0v-.2a1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 0 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3h.1A1.6 1.6 0 0 0 10 3.2V3a2 2 0 0 1 4 0v.2a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.2a1.6 1.6 0 0 0-1.4 1z"/>',
+ chart:'<path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="12" y="6" width="3" height="11"/><rect x="17" y="13" width="3" height="4"/>',
+ package:'<path d="m7.5 4.3 9 5.2M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.3 7 12 12l8.7-5M12 22V12"/>',
+ piggy:'<path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5zM16 11h0"/>',
+ file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>',
+ utensils:'<path d="M3 2v7a3 3 0 0 0 6 0V2M6 9v13M15 2c-1.5 0-3 1.5-3 4s1 5 3 5v11"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ trophy:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.6V17a2 2 0 0 1-1 1.7L7 20h10l-2-1.3a2 2 0 0 1-1-1.7v-2.4M18 2H6v7a6 6 0 0 0 12 0z"/>',
+ clipboard:'<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12h6M9 16h6"/>',
+ cloud:'<path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.5-1.5A4 4 0 0 0 6 19z"/>',
+ cloudcheck:'<path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.5-1.5A4 4 0 0 0 6 19z"/><path d="m9 14 2 2 4-4" stroke-width="2.2"/>',
+ download:'<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
+ upload:'<path d="M12 15V3M7 8l5-5 5 5M5 21h14"/>',
+ lock:'<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+ trash:'<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+ edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+ x:'<path d="M18 6 6 18M6 6l12 12"/>',
+ send:'<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',
+ bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>',
+ flame:'<path d="M12 2c1 3 4 5 4 9a4 4 0 0 1-8 0c0-1 .5-2 1-2.5C9 11 9 9 12 2z"/>',
+ share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+ phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',
+ download2:'<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
+ pin:'<path d="M12 17v5M9 10.8V4h6v6.8l3 3.2H6z"/>',
+ cake:'<path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8M4 16s1.5-2 4-2 4 2 4 2 1.5-2 4-2 4 2 4 2M2 21h20M7 8V6M12 8V6M17 8V6"/>',
+ alert:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h16.9a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ dot:'<circle cx="12" cy="12" r="7"/>',
+ cash:'<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+ arrowright:'<path d="M5 12h14M13 6l6 6-6 6"/>'
+};
+function ic(n,sw){return `<svg class="lic" viewBox="0 0 24 24"${sw?` style="stroke-width:${sw}"`:''}>${IC[n]||''}</svg>`}
 let cloudSyncing=false;
 let lastSync=localStorage.getItem('fam_lastSync')||'';
 
@@ -244,7 +325,7 @@ function whoName(id){return id==='family'?'Family':meName(id)||'?'}
 
 // ===== CLOUD SYNC (3-way merge) =====
 let syncTimer=null,syncing=false,syncAgain=false;
-function setSyncUI(s){const el=$('syncDot');if(el){el.textContent={idle:'☁️ ✓',busy:'☁️ ⟳',err:'☁️ ⚠'}[s];el.title=s==='err'?'Sync error — tap to retry':'Last sync: '+lastSync}}
+function setSyncUI(s){const el=$('syncDot');if(el){el.innerHTML=ic('cloud')+({idle:ic('check',2.4),busy:ic('repeat'),err:'!'}[s]||'');el.title=s==='err'?'Sync error — tap to retry':'Last sync: '+lastSync}}
 function scheduleSync(){clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow(),1500)}
 function mergeArr(b,l,c){b=b||[];l=l||[];c=c||[];const B=new Map(b.map(x=>[x.id,x])),L=new Map(l.map(x=>[x.id,x])),C=new Map(c.map(x=>[x.id,x]));const out=[];
   [...new Set([...c.map(x=>x.id),...l.map(x=>x.id)])].forEach(id=>{const bb=B.get(id),ll=L.get(id),cc=C.get(id);const lCh=J(ll)!==J(bb),cCh=J(cc)!==J(bb);
@@ -279,7 +360,7 @@ async function syncNow(manual){
     if(canon(m)!==canon(cloud)){await fetch(API_URL+'?action=writeAll',{method:'POST',body:JSON.stringify(toRows(m))});
       const after=await fetchCloud();ok=canon(after)===canon(m);if(!ok)syncAgain=true}
     if(ok)D.save('base',m);lastSync=new Date().toLocaleString();localStorage.setItem('fam_lastSync',lastSync);setSyncUI('idle');
-    if(!changedLocally&&canon(m)!==canon(local)&&!document.querySelector('.modal-bg.open')){renderHeader();renderContent()}
+    if(!changedLocally&&canon(m)!==canon(local)&&!document.querySelector('.modal-bg.open')){renderHeader();renderNav();renderContent()}
     if(manual)showToast('✅ Synced');checkLock();
   }catch(e){setSyncUI('err');if(manual)showToast('❌ Sync error: '+e.message,true)}
   syncing=false;if(syncAgain){syncAgain=false;setTimeout(()=>syncNow(),500)}}
@@ -301,7 +382,7 @@ function savePin(){if(pinHash&&hashPin($('pOld').value)!==pinHash){showToast('�
 function pickMe(){openModal(`<h3>👤 Who are you?</h3><p style="font-size:13px;color:var(--text-2);margin-bottom:12px">Choose who uses this device — your name will appear on the entries you add.</p>
   <div style="display:flex;flex-direction:column;gap:8px">${members.map(m=>`<button class="btn ${m.id===me?'btn-primary':'btn-secondary'}" style="padding:14px;justify-content:center;font-size:15px" onclick="setMe('${m.id}')">${m.name||m.role} <span class="tag tag-${(m.role||'other').toLowerCase()}">${m.role}</span></button>`).join('')}</div>`)}
 function setMe(id){me=id;localStorage.setItem('fam_me',id);closeModal();renderHeader();renderContent()}
-function renderHeader(){const c=$('meChip');if(c)c.textContent='👤 '+(meName()||'Who are you?');setSyncUI('idle')}
+function renderHeader(){const c=$('meChip');if(c)c.innerHTML=ic('user')+' '+(meName()||'Who are you?');const l=$('lockLogo');if(l)l.innerHTML=ic('home');const o=$('ovBtn');if(o)o.innerHTML=ic('dots');setSyncUI('idle')}
 
 
 function addHistory(action,section,detail){history.unshift({id:D.id(),time:new Date().toISOString(),action,section,detail,by:me});if(history.length>150)history=history.slice(0,150)}
@@ -312,14 +393,35 @@ function showToast(msg,isError){
 }
 
 const sections=[
-  {id:'overview',icon:'☀️',label:'Today'},{id:'calendar',icon:'📅',label:'Calendar'},{id:'members',icon:'👨‍👩‍👦',label:'Family'},
-  {id:'budget',icon:'💰',label:'Budget'},{id:'tasks',icon:'✅',label:'Tasks'},{id:'rewards',icon:'🏆',label:'Points'},
-  {id:'meals',icon:'🍽️',label:'Menu'},{id:'health',icon:'🏥',label:'Health'},{id:'grocery',icon:'🛒',label:'Grocery'},
-  {id:'wishlist',icon:'🎯',label:'Wishlist'},{id:'history',icon:'📜',label:'History'},{id:'settings',icon:'⚙️',label:'Settings'}
+  {id:'overview',icon:'sun',label:'Today'},{id:'calendar',icon:'calendar',label:'Calendar'},{id:'members',icon:'users',label:'Family'},
+  {id:'budget',icon:'wallet',label:'Budget'},{id:'tasks',icon:'check',label:'Tasks'},{id:'rewards',icon:'trophy',label:'Points'},
+  {id:'meals',icon:'utensils',label:'Menu'},{id:'health',icon:'heart',label:'Health'},{id:'grocery',icon:'cart',label:'Grocery'},
+  {id:'wishlist',icon:'target',label:'Wishlist'},{id:'history',icon:'scroll',label:'History'},{id:'settings',icon:'settings',label:'Settings'}
 ];
+const sec=id=>sections.find(s=>s.id===id);
+const navMain=['overview','calendar','budget','tasks'];
+const moreIds=['members','rewards','meals','health','grocery','wishlist','history','settings'];
 let activeTab='overview';
-function renderTabs(){document.getElementById('tabs').innerHTML=sections.map(s=>`<button class="tab-btn ${s.id===activeTab?'active':''}" onclick="switchTab('${s.id}')">${s.icon} ${s.label}</button>`).join('')}
-function switchTab(id){activeTab=id;renderTabs();renderContent()}
+function renderNav(){
+  const items=navMain.map(id=>{const s=sec(id);return `<button class="nav-item ${id===activeTab?'active':''}" onclick="switchTab('${id}')">${ic(s.icon)}<span>${s.label}</span></button>`}).join('');
+  const moreActive=moreIds.includes(activeTab);
+  $('bottomNav').innerHTML=items+`<button class="nav-item ${moreActive?'active':''}" onclick="openMore()">${ic('menu')}<span>More</span></button>`;
+}
+function openMore(){const g=moreIds.map(id=>{const s=sec(id);return `<button class="sheet-item ${id===activeTab?'active':''}" onclick="switchTab('${id}');closeSheet()">${ic(s.icon)}<span>${s.label}</span></button>`}).join('');
+  $('sheet').innerHTML=`<div class="sheet-handle"></div><div style="font-weight:700;font-size:15px;margin:0 0 12px;padding:0 4px">All sections</div><div class="sheet-grid">${g}</div>`;$('sheetBg').classList.add('open')}
+function closeSheet(){$('sheetBg').classList.remove('open')}
+function switchTab(id){activeTab=id;renderNav();renderContent();document.querySelector('.app').scrollTop=0;window.scrollTo(0,0);closeMenu();updateFab()}
+// ===== OVERFLOW MENU =====
+function toggleMenu(){const m=$('menuPop');if(m.classList.contains('open')){closeMenu();return}
+  m.innerHTML=[['syncNow(true)','refresh','Sync now','repeat'],['exportAllExcel()','xlsx','Export Excel','download'],['exportAllJSON()','json','Backup (JSON)','package'],['$(\'importFile2\').click()','imp','Import backup','upload'],pinHash?['lockNow()','lock','Lock now','lock']:['setPin()','pin','Set PIN','lock']]
+    .map(([fn,,lbl,icn])=>`<button class="menu-row" onclick="closeMenu();${fn}">${ic(icn)}<span>${lbl}</span></button>`).join('')+`<input type="file" id="importFile2" accept=".json" style="display:none" onchange="handleImport(event)">`;
+  m.classList.add('open');setTimeout(()=>document.addEventListener('click',menuOutside),0)}
+function menuOutside(e){if(!$('menuPop').contains(e.target)&&e.target.id!=='ovBtn')closeMenu()}
+function closeMenu(){const m=$('menuPop');if(m){m.classList.remove('open');document.removeEventListener('click',menuOutside)}}
+// ===== FAB =====
+const fabMap={overview:['addTask','Task'],calendar:['addEvent','Event'],budget:['addExpense','Expense'],tasks:['addTask','Task'],members:['addMember','Member'],rewards:['givePoints','Points'],meals:null,health:null,grocery:['addGroceryItem','Item'],wishlist:['addWish','Wish'],history:null,settings:null};
+function updateFab(){const f=$('fab');const m=fabMap[activeTab];if(m){f.style.display='flex';f.innerHTML=ic('plus',2.5)}else f.style.display='none'}
+function fabAction(){const m=fabMap[activeTab];if(m)window[m[0]]()}
 function openModal(html){document.getElementById('modal').innerHTML=html;document.getElementById('modalBg').classList.add('open')}
 function closeModal(){document.getElementById('modalBg').classList.remove('open')}
 function $(id){return document.getElementById(id)}
@@ -397,7 +499,7 @@ function renderOverview(){
   const pendingTasks=tasks.filter(t=>t.status!=='Done').length;const doneTasks=tasks.filter(t=>t.status==='Done').length;
   const groceryPending=grocery.filter(g=>!g.bought).length;
   const groceryTotal=grocery.reduce((s,g)=>s+Number(g.price||0)*Number(g.qty||1),0);
-  let h=renderToday()+`<div class="card"><div class="card-header"><h2><span class="icon icon-blue">📊</span> Dashboard</h2></div>
+  let h=renderToday()+`<div class="card"><div class="card-header"><h2><span class="icon icon-blue">${ic('chart')}</span> Dashboard</h2></div>
   <div class="stats">
     <div class="stat" onclick="switchTab('members')" style="cursor:pointer"><div class="stat-val" style="color:var(--accent)">${members.length}</div><div class="stat-label">Members</div></div>
     <div class="stat" onclick="switchTab('budget')" style="cursor:pointer"><div class="stat-val" style="color:${balance>=0?'var(--green)':'var(--red)'}">${fmt(balance)}</div><div class="stat-label">Balance</div></div>
@@ -407,7 +509,7 @@ function renderOverview(){
     <div class="stat" onclick="switchTab('wishlist')" style="cursor:pointer"><div class="stat-val" style="color:var(--pink)">${wishlist.filter(w=>w.status!=='Bought').length}</div><div class="stat-label">Wishlist</div></div>
   </div></div>`;
   // Per-member
-  h+=`<div class="card"><div class="card-header"><h2><span class="icon icon-violet">👥</span> Per-Member</h2></div>`;
+  h+=`<div class="card"><div class="card-header"><h2><span class="icon icon-violet">${ic('users')}</span> Per-Member</h2></div>`;
   members.forEach(m=>{const mTasks=tasks.filter(t=>t.assignee===m.id);const tag=`tag-${m.role.toLowerCase()}`;
     h+=`<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border-light)">
       <span class="tag ${tag}" style="min-width:60px;text-align:center">${m.role}</span>
@@ -416,7 +518,7 @@ function renderOverview(){
     </div>`});
   h+=`</div>`;
   // Export all
-  h+=`<div class="card"><div class="card-header"><h2><span class="icon icon-green">📦</span> Data Backup</h2></div>
+  h+=`<div class="card"><div class="card-header"><h2><span class="icon icon-green">${ic('package')}</span> Data Backup</h2></div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="exportAllJSON()">📥 Export All (JSON)</button>
       <button class="btn btn-success" onclick="exportAllExcel()">📗 Export All (Excel)</button>
@@ -445,7 +547,7 @@ function handleImport(e){const file=e.target.files[0];if(!file)return;const read
 
 // ===== MEMBERS =====
 function renderMembers(){
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-blue">👨‍👩‍👦</span> Family Members</h2><button class="btn btn-primary btn-sm" onclick="addMember()">+ Add</button></div>`;
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-blue">${ic('users')}</span> Family Members</h2><button class="btn btn-primary btn-sm" onclick="addMember()">+ Add</button></div>`;
   h+=exportBar('exportMembersCSV()','exportMembersJSON()','exportMembersXLS()','shareMembersSend()');
   members.forEach((m,i)=>{const tag=`tag-${m.role.toLowerCase()}`;
     h+=`<div class="member-card">
@@ -487,7 +589,7 @@ function shareMembersSend(){let t='👨‍👩‍👦 FAMILY MEMBERS\n\n';member
 const expCats=['Loan','Rent/Arenda','Utilities','Grocery/Market','Restaurant','Transport','Education','Clothing','Entertainment','Healthcare','Savings','Insurance','Communication','Gifts','Household','Other'];
 function renderBudget(){
   const totalExp=budget.expenses.reduce((s,e)=>s+Number(e.amount),0);const balance=Number(budget.income)-totalExp;
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-green">💰</span> Family Budget</h2></div>`;
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-green">${ic('wallet')}</span> Family Budget</h2></div>`;
   h+=exportBar('exportBudgetCSV()','exportBudgetJSON()','exportBudgetXLS()','shareBudgetSend()');
   h+=`<div class="stats">
     <div class="stat"><div class="stat-val" style="color:var(--green)">${fmt(budget.income)}</div><div class="stat-label">Income</div></div>
@@ -523,7 +625,7 @@ function shareBudgetSend(){const tot=budget.expenses.reduce((s,e)=>s+Number(e.am
 // ===== TASKS =====
 const taskPeriods=['Daily','Weekly','Monthly','Yearly'];const taskStatuses=['Pending','In Progress','Done','Overdue'];
 function renderTasks(){
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-orange">✅</span> Tasks & Goals</h2><button class="btn btn-primary btn-sm" onclick="addTask()">+ Add</button></div>`;
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-orange">${ic('check')}</span> Tasks & Goals</h2><button class="btn btn-primary btn-sm" onclick="addTask()">+ Add</button></div>`;
   h+=exportBar('exportTasksCSV()','exportTasksJSON()','exportTasksXLS()','shareTasksSend()');
   h+=`<div class="member-filter" id="taskFilter">
     <span class="member-pill active" onclick="filterTasks('all',this)">All</span>
@@ -577,7 +679,7 @@ function shareTasksSend(){let t='✅ FAMILY TASKS\n\n';taskPeriods.forEach(p=>{c
 
 // ===== HEALTH =====
 function renderHealth(){
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-red">🏥</span> Health & Medicine</h2></div>`;
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-red">${ic('heart')}</span> Health & Medicine</h2></div>`;
   h+=exportBar('exportHealthCSV()','exportHealthJSON()','exportHealthXLS()','shareHealthSend()');
   members.forEach(m=>{const mh=health.filter(x=>x.memberId===m.id);const tag=`tag-${m.role.toLowerCase()}`;
     h+=`<div class="member-card">
@@ -616,7 +718,7 @@ const groceryCats=['Fruits','Vegetables','Bread & Bakery','Meat & Fish','Dairy &
 const groceryUnits=['kg','pcs','litre','pack','bottle','bag','box','dozen','gram','bunch'];
 function renderGrocery(){
   const total=grocery.reduce((s,g)=>s+Number(g.price||0)*Number(g.qty||1),0);const bought=grocery.filter(g=>g.bought).length;
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-aqua">🛒</span> Grocery List</h2><button class="btn btn-primary btn-sm" onclick="addGroceryItem()">+ Add</button></div>`;
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-aqua">${ic('cart')}</span> Grocery List</h2><button class="btn btn-primary btn-sm" onclick="addGroceryItem()">+ Add</button></div>`;
   h+=exportBar('exportGroceryCSV()','exportGroceryJSON()','exportGroceryXLS()','shareGrocerySend()');
   h+=`<div class="stats">
     <div class="stat"><div class="stat-val" style="color:var(--accent)">${grocery.length}</div><div class="stat-label">Items</div></div>
@@ -664,7 +766,7 @@ function shareGrocerySend(){const total=grocery.reduce((s,g)=>s+Number(g.price||
 const wishPriority=['High','Medium','Low'];const wishStatus=['Planning','Saving','Ready to Buy','Bought'];
 function renderWishlist(){
   const totalPlanned=wishlist.filter(w=>w.status!=='Bought').reduce((s,w)=>s+Number(w.price||0),0);
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-pink">🎯</span> Planned Purchases</h2><button class="btn btn-primary btn-sm" onclick="addWish()">+ Add</button></div>`;
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-pink">${ic('target')}</span> Planned Purchases</h2><button class="btn btn-primary btn-sm" onclick="addWish()">+ Add</button></div>`;
   h+=exportBar('exportWishCSV()','exportWishJSON()','exportWishXLS()','shareWishSend()');
   h+=`<div class="stats"><div class="stat"><div class="stat-val" style="color:var(--orange)">${wishlist.filter(w=>w.status!=='Bought').length}</div><div class="stat-label">Pending</div></div>
     <div class="stat"><div class="stat-val" style="color:var(--violet)">${fmt(totalPlanned)}</div><div class="stat-label">Est. Cost</div></div>
@@ -704,7 +806,7 @@ function shareWishSend(){let t='🎯 PLANNED PURCHASES\n\n';wishlist.forEach(w=>
 
 // ===== HISTORY =====
 function renderHistory(){
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-violet">📜</span> Activity History</h2></div>
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-violet">${ic('scroll')}</span> Activity History</h2></div>
     <p style="font-size:12px;color:var(--text-3);margin-bottom:12px">All changes tracked automatically. Last 200 entries.</p>
     <div class="btn-row" style="margin-bottom:14px">
       <button class="btn btn-sm btn-secondary" onclick="downloadJSON('family_history',history)">📥 JSON</button>
@@ -731,15 +833,15 @@ const kindColor={event:'var(--accent)',bday:'var(--pink)',task:'var(--orange)',a
 function itemsOn(ds){const out=[];const D0=pd(ds);const [y,mo,da]=ds.split('-').map(Number);
   events.forEach(e=>{if(!e.date)return;const E=pd(e.date);if(D0<E)return;const r=e.repeat||'none';
     const hit=r==='yearly'?(E.getMonth()===mo-1&&E.getDate()===da):r==='monthly'?E.getDate()===da:r==='weekly'?E.getDay()===D0.getDay():r==='daily'?true:e.date===ds;
-    if(hit)out.push({icon:'📌',title:(e.time?e.time+' · ':'')+e.title,who:e.memberId,kind:'event',id:e.id,time:e.time||''})});
-  members.forEach(m=>{if(m.birthday&&m.birthday.slice(5)===ds.slice(5))out.push({icon:'🎂',title:(m.name||m.role)+' — birthday'+(m.birthday.slice(0,4)<y?` (turns ${y-Number(m.birthday.slice(0,4))})`:''),who:m.id,kind:'bday'})});
-  tasks.forEach(t=>{if(t.due===ds)out.push({icon:t.status==='Done'?'✅':'⬜',title:t.title,who:t.assignee,kind:'task'})});
-  health.forEach(h=>{if(h.nextAppt===ds)out.push({icon:'🏥',title:'Doctor: '+(h.doctor||h.condition||''),who:h.memberId,kind:'appt'})});
-  docs.forEach(d=>{if(d.expiry===ds)out.push({icon:'📄',title:d.title+' — expires',who:d.memberId,kind:'doc'})});
+    if(hit)out.push({icon:'pin',title:(e.time?e.time+' · ':'')+e.title,who:e.memberId,kind:'event',id:e.id,time:e.time||''})});
+  members.forEach(m=>{if(m.birthday&&m.birthday.slice(5)===ds.slice(5))out.push({icon:'cake',title:(m.name||m.role)+' — birthday'+(m.birthday.slice(0,4)<y?` (turns ${y-Number(m.birthday.slice(0,4))})`:''),who:m.id,kind:'bday'})});
+  tasks.forEach(t=>{if(t.due===ds)out.push({icon:t.status==='Done'?'check':'checkbox',title:t.title,who:t.assignee,kind:'task'})});
+  health.forEach(h=>{if(h.nextAppt===ds)out.push({icon:'heart',title:'Doctor: '+(h.doctor||h.condition||''),who:h.memberId,kind:'appt'})});
+  docs.forEach(d=>{if(d.expiry===ds)out.push({icon:'file',title:d.title+' — expires',who:d.memberId,kind:'doc'})});
   return out.sort((a,b)=>(a.time||'').localeCompare(b.time||''))}
 function renderCalendar(){const y=calMonth.getFullYear(),m=calMonth.getMonth();const first=(new Date(y,m,1).getDay()+6)%7;const days=new Date(y,m+1,0).getDate();const t=todayStr();
   const mn=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-blue">📅</span> Family Calendar</h2><button class="btn btn-primary btn-sm" onclick="addEvent()">+ Event</button></div>
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-blue">${ic('calendar')}</span> Family Calendar</h2><button class="btn btn-primary btn-sm" onclick="addEvent()">+ Event</button></div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><button class="btn btn-secondary btn-sm" onclick="calMonth.setMonth(calMonth.getMonth()-1);renderContent()">◀</button>
   <strong style="font-size:16px">${mn[m]} ${y}</strong><button class="btn btn-secondary btn-sm" onclick="calMonth.setMonth(calMonth.getMonth()+1);renderContent()">▶</button></div>
   <div class="cal-grid">${['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>`<div class="cal-head">${d}</div>`).join('')}${'<div></div>'.repeat(first)}`;
@@ -747,8 +849,8 @@ function renderCalendar(){const y=calMonth.getFullYear(),m=calMonth.getMonth();c
     h+=`<div class="cal-cell ${ds===t?'today':''} ${ds===calSel?'sel':''}" onclick="calSel='${ds}';renderContent()"><span>${d}</span><div class="cal-dots">${it.slice(0,4).map(i=>`<i style="background:${kindColor[i.kind]}"></i>`).join('')}</div></div>`}
   h+=`</div><div style="display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--text-3);margin-top:8px">${[['event','Event'],['bday','Birthday'],['task','Task'],['appt','Doctor'],['doc','Document']].map(([k,l])=>`<span><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${kindColor[k]}"></i> ${l}</span>`).join('')}</div></div>`;
   const it=itemsOn(calSel);
-  h+=`<div class="card"><div class="card-header"><h2><span class="icon icon-violet">🗓️</span> ${calSel}</h2><button class="btn btn-primary btn-sm" onclick="addEvent('${calSel}')">+ Add to this day</button></div>`;
-  h+=it.length?it.map(i=>`<div class="list-item" style="border-left:4px solid ${kindColor[i.kind]}"><span style="font-size:18px">${i.icon}</span><div class="item-text"><div style="font-weight:600">${i.title}</div>${i.who?`<span class="tag tag-other">${whoName(i.who)}</span>`:''}</div>${i.kind==='event'?`<button class="btn btn-sm btn-secondary" onclick="editEvent('${i.id}')">✏️</button>`:''}</div>`).join(''):`<p style="color:var(--text-3);text-align:center;padding:16px;font-style:italic">Nothing on this day.</p>`;
+  h+=`<div class="card"><div class="card-header"><h2><span class="icon icon-violet">${ic('calendar')}</span> ${calSel}</h2><button class="btn btn-primary btn-sm" onclick="addEvent('${calSel}')">+ Add to this day</button></div>`;
+  h+=it.length?it.map(i=>`<div class="list-item" style="border-left:4px solid ${kindColor[i.kind]}"><span style="font-size:18px;color:${kindColor[i.kind]};display:flex">${ic(i.icon)}</span><div class="item-text"><div style="font-weight:600">${i.title}</div>${i.who?`<span class="tag tag-other">${whoName(i.who)}</span>`:''}</div>${i.kind==='event'?`<button class="btn btn-sm btn-secondary" onclick="editEvent('${i.id}')">${ic('edit')}</button>`:''}</div>`).join(''):`<p style="color:var(--text-3);text-align:center;padding:16px;font-style:italic">Nothing on this day.</p>`;
   return h+`</div>`}
 function eventForm(e){return `<label>Title</label><input id="evT" value="${e.title||''}" placeholder="e.g. Wedding, Parent meeting">
   <div class="form-row" style="margin-top:10px"><div><label>Date</label><input id="evD" type="date" value="${e.date||calSel}"></div><div><label>Time</label><input id="evTm" type="time" value="${e.time||''}"></div></div>
@@ -764,12 +866,12 @@ function saveEvent(id){if(!$('evT').value.trim())return;const v={title:$('evT').
 // ===== POINTS & REWARDS =====
 function pointsOf(id){return ledger.filter(l=>l.memberId===id).reduce((s,l)=>s+Number(l.pts||0),0)}
 function renderRewards(){const ranked=[...members].sort((a,b)=>pointsOf(b.id)-pointsOf(a.id));
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-orange">🏆</span> Points Leaderboard</h2><button class="btn btn-primary btn-sm" onclick="givePoints()">+ Give Points</button></div>
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-orange">${ic('trophy')}</span> Points Leaderboard</h2><button class="btn btn-primary btn-sm" onclick="givePoints()">+ Give Points</button></div>
   <p style="font-size:12px;color:var(--text-3);margin-bottom:12px">Add points to tasks — they're credited automatically when done. Points can be exchanged for rewards.</p><div class="stats">`;
   ranked.forEach((m,i)=>h+=`<div class="stat"><div style="font-size:20px">${['🥇','🥈','🥉'][i]||'⭐'}</div><div class="stat-val" style="color:var(--orange)">${pointsOf(m.id)}</div><div class="stat-label">${m.name||m.role}</div></div>`);
-  h+=`</div></div><div class="card"><div class="card-header"><h2><span class="icon icon-pink">🎁</span> Rewards</h2><button class="btn btn-primary btn-sm" onclick="addReward()">+ Reward</button></div>`;
+  h+=`</div></div><div class="card"><div class="card-header"><h2><span class="icon icon-pink">${ic('gift')}</span> Rewards</h2><button class="btn btn-primary btn-sm" onclick="addReward()">+ Reward</button></div>`;
   h+=rewards.length?rewards.map(r=>`<div class="list-item"><span style="font-size:20px">🎁</span><div class="item-text"><strong>${r.name}</strong><div style="font-size:12px;color:var(--orange);font-weight:700">${r.cost} pts</div></div><button class="btn btn-sm btn-success" onclick="redeem('${r.id}')">Redeem</button><button class="del-btn" onclick="rewards=rewards.filter(x=>x.id!=='${r.id}');saveAll();renderContent()">×</button></div>`).join(''):`<p style="color:var(--text-3);text-align:center;padding:16px;font-style:italic">e.g. "Movie night — 50 pts", "New toy — 200 pts"</p>`;
-  h+=`</div><div class="card"><div class="card-header"><h2><span class="icon icon-violet">📒</span> Recent Activity</h2></div>`;
+  h+=`</div><div class="card"><div class="card-header"><h2><span class="icon icon-violet">${ic('clipboard')}</span> Recent Activity</h2></div>`;
   const rec=[...ledger].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,20);
   h+=rec.length?rec.map(l=>`<div class="list-item"><strong style="color:${l.pts>0?'var(--green)':'var(--red)'};min-width:48px">${l.pts>0?'+':''}${l.pts}</strong><div class="item-text">${l.reason}<div style="font-size:11px;color:var(--text-3)">${meName(l.memberId)} · ${(l.date||'').slice(0,10)}</div></div></div>`).join(''):`<p style="color:var(--text-3);text-align:center;padding:16px;font-style:italic">No points yet.</p>`;
   return h+`</div>`}
@@ -791,7 +893,7 @@ function resetRecurring(){let ch=false;tasks.forEach(t=>{if(t.recur&&t.status===
 const mealSlots=['Breakfast','Lunch','Dinner'];let mealWeek=0;
 function weekDays(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7)+mealWeek*7);return [...Array(7)].map((_,i)=>{const x=new Date(d);x.setDate(d.getDate()+i);return todayStr(x)})}
 function renderMeals(){const wd=weekDays();const dn=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];const t=todayStr();
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-green">🍽️</span> Weekly Menu</h2></div>
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-green">${ic('utensils')}</span> Weekly Menu</h2></div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><button class="btn btn-secondary btn-sm" onclick="mealWeek--;renderContent()">◀</button><strong>${wd[0].slice(5)} — ${wd[6].slice(5)}</strong><button class="btn btn-secondary btn-sm" onclick="mealWeek++;renderContent()">▶</button></div>
   <button class="btn btn-success" style="width:100%;justify-content:center;margin-bottom:14px" onclick="mealsToGrocery()">🛒 Add this week's ingredients to Grocery</button>`;
   wd.forEach((ds,i)=>{h+=`<div class="member-card" style="${ds===t?'border-color:var(--accent)':''}"><strong>${dn[i]}</strong> <span style="font-size:12px;color:var(--text-3)">${ds.slice(5)}</span>${ds===t?' <span class="tag tag-inprogress">Today</span>':''}
@@ -813,7 +915,7 @@ function mealsToGrocery(){const wd=weekDays();const have=new Set(grocery.filter(
 // ===== DOCUMENTS =====
 function daysLeft(ds){return Math.round((pd(ds)-pd(todayStr()))/86400000)}
 function renderDocs(){const list=[...docs].sort((a,b)=>(a.expiry||'9').localeCompare(b.expiry||'9'));
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-violet">📄</span> Document Expiry</h2><button class="btn btn-primary btn-sm" onclick="editDoc()">+ Add</button></div>
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-violet">${ic('file')}</span> Document Expiry</h2><button class="btn btn-primary btn-sm" onclick="editDoc()">+ Add</button></div>
   <p style="font-size:12px;color:var(--text-3);margin-bottom:10px">Passport, driver's license, insurance, vehicle inspection... You'll be reminded on the Today page and in Telegram 30 days before expiry. Don't enter document numbers.</p>`;
   h+=list.length?list.map(d=>{const dl=d.expiry?daysLeft(d.expiry):null;const cls=dl===null?'tag-other':dl<0?'tag-overdue':dl<=30?'tag-overdue':dl<=90?'tag-pending':'tag-done';
     return `<div class="list-item"><span style="font-size:18px">📄</span><div class="item-text"><strong>${d.title}</strong><div style="font-size:12px"><span class="tag tag-other">${whoName(d.memberId)}</span> <span style="color:var(--text-3)">${d.expiry||''}</span></div></div><span class="tag ${cls}">${dl===null?'—':dl<0?'Expired':dl+' days'}</span><button class="btn btn-sm btn-secondary" onclick="editDoc('${d.id}')">✏️</button></div>`}).join(''):`<p style="color:var(--text-3);text-align:center;padding:16px;font-style:italic">No documents yet.</p>`;
@@ -839,17 +941,17 @@ function upcoming(n){const out=[];for(let i=1;i<=n;i++){const d=new Date();d.set
 function todayData(){const t=todayStr();return{t,items:itemsOn(t),overdue:tasks.filter(x=>x.due&&x.due<t&&x.status!=='Done'),
   daily:tasks.filter(x=>x.period==='Daily'&&x.recur&&x.status!=='Done'),meals:mealSlots.map(s=>meals.find(m=>m.date===t&&m.slot===s)).filter(Boolean),
   meds:health.filter(h=>h.medication&&/Daily/.test(h.frequency||'')),up:upcoming(7),billsDue:billsDue(3),docsSoon:docs.filter(d=>d.expiry&&daysLeft(d.expiry)<=30),warn:limitWarnings()}}
-function renderToday(){const T=todayData();const li=(icon,txt,sub,col)=>`<div class="list-item" style="border-left:4px solid ${col||'var(--border)'}"><span style="font-size:17px">${icon}</span><div class="item-text"><div style="font-weight:600">${txt}</div>${sub?`<div style="font-size:11px;color:var(--text-3)">${sub}</div>`:''}</div></div>`;
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-orange">☀️</span> Today · ${T.t}</h2><button class="btn btn-sm btn-secondary" onclick="sharePicker('Daily summary',digestText())">📨</button></div>`;let any=false;
+function renderToday(){const T=todayData();const li=(icon,txt,sub,col)=>`<div class="list-item" style="border-left:4px solid ${col||'var(--border)'}"><span style="font-size:18px;color:${col||'var(--text-3)'};display:flex">${ic(icon)}</span><div class="item-text"><div style="font-weight:600">${txt}</div>${sub?`<div style="font-size:11px;color:var(--text-3)">${sub}</div>`:''}</div></div>`;
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-orange">${ic('sun')}</span> Today · ${T.t}</h2><button class="btn btn-sm btn-secondary" onclick="sharePicker('Daily summary',digestText())">${ic('send')}</button></div>`;let any=false;
   if(T.items.length){any=true;T.items.forEach(i=>h+=li(i.icon,i.title,i.who?whoName(i.who):'',kindColor[i.kind]))}
-  if(T.overdue.length){any=true;h+=`<h3 style="color:var(--red)">⚠️ Overdue</h3>`;T.overdue.forEach(x=>h+=li('⏰',x.title,whoName(x.assignee)+' · '+x.due,'var(--red)'))}
-  if(T.daily.length){any=true;h+=`<h3>🔁 Daily Tasks</h3>`;T.daily.forEach(x=>h+=li('⬜',x.title,whoName(x.assignee)+(x.points?` · ⭐${x.points}`:''),'var(--orange)'))}
-  if(T.meals.length){any=true;h+=`<h3>🍽️ Today's Menu</h3>`;T.meals.forEach(m=>h+=li('🍲',m.dish,m.slot,'var(--green)'))}
-  if(T.meds.length){any=true;h+=`<h3>💊 Medications</h3>`;T.meds.forEach(x=>h+=li('💊',x.medication+' '+(x.dosage||''),meName(x.memberId)+' · '+x.frequency,'var(--red)'))}
-  if(T.warn.length){any=true;h+=`<h3>💸 Budget Warnings</h3>`;T.warn.forEach(w=>h+=li(w.spent>w.lim?'🔴':'🟠',w.c,fmt(w.spent)+' / '+fmt(w.lim),w.spent>w.lim?'var(--red)':'var(--orange)'))}
-  if(T.billsDue.length){any=true;h+=`<h3>🔁 Bills due</h3>`;T.billsDue.forEach(b=>h+=li(b.dl<0?'🔴':'🟠',b.name+' — '+fmt(b.amount),b.dl<0?'overdue '+(-b.dl)+' days':b.dl===0?'today':'in '+b.dl+' days','var(--orange)'))}
-  if(T.docsSoon.length){any=true;h+=`<h3>📄 Document Expiry</h3>`;T.docsSoon.forEach(d=>{const dl=daysLeft(d.expiry);h+=li('📄',d.title,whoName(d.memberId)+' · '+(dl<0?'expired':dl+' days left'),'var(--violet)')})}
-  if(T.up.length){any=true;h+=`<h3>🔜 Next 7 Days</h3>`;T.up.forEach(x=>h+=li(x.icon,x.title,x.ds+(x.i===1?' · tomorrow':''),kindColor[x.kind]))}
+  if(T.overdue.length){any=true;h+=`<h3 style="color:var(--red)">${ic('alert')} Overdue</h3>`;T.overdue.forEach(x=>h+=li('alarm',x.title,whoName(x.assignee)+' · '+x.due,'var(--red)'))}
+  if(T.daily.length){any=true;h+=`<h3>${ic('repeat')} Daily Tasks</h3>`;T.daily.forEach(x=>h+=li('checkbox',x.title,whoName(x.assignee)+(x.points?` · ⭐${x.points}`:''),'var(--orange)'))}
+  if(T.meals.length){any=true;h+=`<h3>${ic('utensils')} Today's Menu</h3>`;T.meals.forEach(m=>h+=li('utensils',m.dish,m.slot,'var(--green)'))}
+  if(T.meds.length){any=true;h+=`<h3>${ic('pill')} Medications</h3>`;T.meds.forEach(x=>h+=li('pill',x.medication+' '+(x.dosage||''),meName(x.memberId)+' · '+x.frequency,'var(--red)'))}
+  if(T.warn.length){any=true;h+=`<h3>${ic('cash')} Budget Warnings</h3>`;T.warn.forEach(w=>h+=li('dot',w.c,fmt(w.spent)+' / '+fmt(w.lim),w.spent>w.lim?'var(--red)':'var(--orange)'))}
+  if(T.billsDue.length){any=true;h+=`<h3>${ic('card')} Bills due</h3>`;T.billsDue.forEach(b=>h+=li('card',b.name+' — '+fmt(b.amount),b.dl<0?'overdue '+(-b.dl)+' days':b.dl===0?'today':'in '+b.dl+' days','var(--orange)'))}
+  if(T.docsSoon.length){any=true;h+=`<h3>${ic('file')} Document Expiry</h3>`;T.docsSoon.forEach(d=>{const dl=daysLeft(d.expiry);h+=li('file',d.title,whoName(d.memberId)+' · '+(dl<0?'expired':dl+' days left'),'var(--violet)')})}
+  if(T.up.length){any=true;h+=`<h3>${ic('arrowright')} Next 7 Days</h3>`;T.up.forEach(x=>h+=li(x.icon,x.title,x.ds+(x.i===1?' · tomorrow':''),kindColor[x.kind]))}
   if(!any)h+=`<p style="color:var(--text-3);text-align:center;padding:16px;font-style:italic">Nothing for today 🎉</p>`;
   return h+`</div>`}
 function digestText(){const T=todayData();let s=`☀️ MY FAMILY — ${T.t}\n`;const sec=(t,arr)=>{if(arr.length)s+=`\n${t}\n`+arr.map(x=>'• '+x).join('\n')+'\n'};
@@ -866,7 +968,7 @@ function maybeDigest(){const t=todayStr();if(false&&settings.tgBotToken&&setting
 
 // ===== SAVINGS GOALS =====
 function monthsLeft(ds){if(!ds)return null;const a=new Date(),b=pd(ds);return Math.max(1,(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth())}
-function renderGoals(){let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-green">🐷</span> Savings Goals</h2><button class="btn btn-primary btn-sm" onclick="editGoal()">+ Goal</button></div>`;
+function renderGoals(){let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-green">${ic('piggy')}</span> Savings Goals</h2><button class="btn btn-primary btn-sm" onclick="editGoal()">+ Goal</button></div>`;
   if(!goals.length)return h+`<p style="color:var(--text-3);text-align:center;padding:16px;font-style:italic">e.g. Emergency fund, Summer trip, New car</p></div>`;
   const tot=goals.reduce((s,g)=>s+Number(g.saved||0),0),tgt=goals.reduce((s,g)=>s+Number(g.target||0),0);
   h+=`<div class="stats"><div class="stat"><div class="stat-val" style="color:var(--green)">${fmt(tot)}</div><div class="stat-label">Saved</div></div><div class="stat"><div class="stat-val" style="color:var(--accent)">${fmt(tgt)}</div><div class="stat-label">Target</div></div><div class="stat"><div class="stat-val" style="color:var(--violet)">${tgt?Math.round(tot/tgt*100):0}%</div><div class="stat-label">Progress</div></div></div>`;
@@ -898,7 +1000,7 @@ function payBill(id,silent){const b=bills.find(x=>x.id===id);const mk=todayStr()
 function autoBills(){const t=todayStr();let n=0;bills.forEach(b=>{if(b.auto&&billDate(b)<=t&&payBill(b.id,true))n++});if(n){saveAll();renderContent()}}
 function billsDue(days){const t=todayStr();return bills.filter(b=>!billPaid(b)).map(b=>({...b,due:billDate(b),dl:daysLeft(billDate(b))})).filter(b=>b.dl<=days).sort((a,b)=>a.dl-b.dl)}
 function renderBills(){const mk=todayStr().slice(0,7);const total=bills.reduce((s,b)=>s+Number(b.amount||0),0);const paid=bills.filter(b=>billPaid(b,mk)).reduce((s,b)=>s+Number(b.amount||0),0);
-  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-orange">🔁</span> Recurring Bills</h2><button class="btn btn-primary btn-sm" onclick="editBill()">+ Bill</button></div>`;
+  let h=`<div class="card"><div class="card-header"><h2><span class="icon icon-orange">${ic('repeat')}</span> Recurring Bills</h2><button class="btn btn-primary btn-sm" onclick="editBill()">+ Bill</button></div>`;
   if(!bills.length)return h+`<p style="color:var(--text-3);text-align:center;padding:16px;font-style:italic">e.g. Electricity, Gas, Internet, Loan, School fee</p></div>`;
   h+=`<div class="stats"><div class="stat"><div class="stat-val" style="color:var(--accent)">${fmt(total)}</div><div class="stat-label">Monthly</div></div><div class="stat"><div class="stat-val" style="color:var(--green)">${fmt(paid)}</div><div class="stat-label">Paid this month</div></div><div class="stat"><div class="stat-val" style="color:var(--orange)">${fmt(total-paid)}</div><div class="stat-label">Remaining</div></div></div>`;
   [...bills].sort((a,b)=>a.day-b.day).forEach(b=>{const p=billPaid(b,mk);const dl=daysLeft(billDate(b));
@@ -923,7 +1025,7 @@ if('serviceWorker' in navigator&&location.protocol==='https:'&&!location.hostnam
 // ===== SETTINGS =====
 function renderSettings(){
   const tgOk=settings.tgBotToken&&settings.tgChatId;
-  return `<div class="card"><div class="card-header"><h2><span class="icon icon-blue">⚙️</span> Settings</h2></div>
+  return `<div class="card"><div class="card-header"><h2><span class="icon icon-blue">${ic('settings')}</span> Settings</h2></div>
 
     <div class="settings-panel" style="border-color:${tgOk?'var(--green)':'var(--border-light)'}">
       <h3>📨 Telegram Bot ${tgOk?'<span class="tag tag-done">Connected</span>':'<span class="tag tag-overdue">Not Set Up</span>'}</h3>
@@ -990,7 +1092,7 @@ function renderSettings(){
     </div>
   </div>`}
 
-renderHeader();resetRecurring();renderTabs();renderContent();checkLock();
+renderHeader();resetRecurring();renderNav();updateFab();renderContent();checkLock();
 if(!me||!members.find(m=>m.id===me))setTimeout(pickMe,300);
 syncNow().then(()=>{renderHeader();resetRecurring();autoBills()});
 setInterval(()=>{if(!document.hidden&&!document.querySelector('.modal-bg.open'))syncNow()},45000);
